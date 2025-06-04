@@ -40,14 +40,15 @@ switch ($action) {
             ajouterErreur('Pas de fiche de frais pour ce visiteur ce mois');
             include 'vues/v_erreurs.php';
             include 'vues/v_listeVisiteur.php';
-        } else {
+        } else {            ajouterErreur('Pas de fiche de frais pour ce visiteur ce mois');
+
 
             include 'vues/v_validerFiches.php';
         }
 
 
         break;
-    case "corriger":
+    case "corrigerFraisForfait": //corriger frais forfait
         $nouveauFrais = filter_input(INPUT_POST, 'nouveauFrais', FILTER_DEFAULT, FILTER_FORCE_ARRAY);
         $idVisiteur = filter_input(INPUT_POST, 'visiteur', FILTER_SANITIZE_SPECIAL_CHARS);
         $mois = filter_input(INPUT_POST, 'lstMois', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -58,13 +59,15 @@ switch ($action) {
         $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur, $mois);
         $pdo->majFraisForfait($idVisiteur, $mois, $nouveauFrais);
         $lesFraisForfait = $pdo->getLesFraisForfait($idVisiteur, $mois);
+        include 'vues/v_validerFiches.php';
         break;
-    case "corrigerFrais":
+    case "corrigerFraisHorsForfait": //corriger frais hors forfait
         $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_SPECIAL_CHARS);
         $libelle = filter_input(INPUT_POST, 'libelle', FILTER_SANITIZE_SPECIAL_CHARS);
         $montant = filter_input(INPUT_POST, 'montant', FILTER_VALIDATE_FLOAT);
         $idVisiteur = filter_input(INPUT_POST, 'visiteur', FILTER_SANITIZE_SPECIAL_CHARS);
         $mois = filter_input(INPUT_POST, 'lstMois', FILTER_SANITIZE_SPECIAL_CHARS);
+        $idFrais = filter_input(INPUT_POST, 'idFrais', FILTER_SANITIZE_SPECIAL_CHARS);
         if (isset($_POST['corriger'])) {
             var_dump($montant, $libelle, $date, $idVisiteur, $mois);
             $visiteurASelectionner = $idVisiteur;
@@ -89,12 +92,32 @@ switch ($action) {
     }
             $pdo->creeNouveauFraisHorsForfait($idVisiteur, $mois, $libelle, $date, $montant);
         } elseif (isset($_POST['supprimer'])) {
-                $pdo->supprimerFraisHorsForfait($idVisiteur, $mois, $libelle, $date, $montant); 
+                $pdo->supprimerFraisHorsForfait($idFrais); 
+                $visiteurASelectionner = $idVisiteur;
+            $moisASelectionner = $mois;
+            $lesVisiteurs = $pdo->getLesVisiteurs();
+            $moisAffiches = getLesMois();
+            $libelle = "refuser " . $libelle;
+            $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur, $mois);
+            $lesFraisForfait = $pdo->getLesFraisForfait($idVisiteur, $mois);
         }
 
         include 'vues/v_validerFiches.php';
 
         break;
+        case 'validerTotal':
+        $idVisiteur = filter_input(INPUT_POST, 'visiteur', FILTER_SANITIZE_SPECIAL_CHARS);
+        $leMois = filter_input(INPUT_POST, 'lstMois', FILTER_SANITIZE_SPECIAL_CHARS);
+        $pdo->majEtatFicheFrais($idVisiteur, $leMois, 'VA');
+        $sommeHF=$pdo->montantHF($idVisiteur,$leMois);
+        $totalHF=$sommeHF[0][0];
+        $sommeFF=$pdo->montantFF($idVisiteur,$leMois);
+        $totalFF=$sommeFF[0][0];
+        $montantTotal=$totalHF+$totalFF;
+        $pdo->total($idVisiteur,$leMois,$montantTotal);
+        include 'vues/v_retourAccueil.php';
+        break;
+
 }
 
 //  controleur if(isset($_POST['Corriger])){

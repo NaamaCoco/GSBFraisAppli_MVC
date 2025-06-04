@@ -30,7 +30,7 @@ case 'valideConnexion':
     if (!is_array($visiteur)&&!is_array($comptable)) {
         ajouterErreur('Login ou mot de passe incorrect');
         include 'vues/v_erreurs.php';
-        include 'vues/v_connexion.php';
+        include 'vues/v_connexion.php';  
     } elseif (is_array($visiteur)) {
         $id = $visiteur['id'];
         $nom = $visiteur['nom'];

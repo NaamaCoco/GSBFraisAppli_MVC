@@ -54,9 +54,11 @@ case 'validerCreationFrais':
     break;
 case 'supprimerFrais':
     $idFrais = filter_input(INPUT_GET, 'idFrais', FILTER_SANITIZE_SPECIAL_CHARS);
-c    break;
+    $pdo->supprimerFraisHorsForfait($idFrais);
+    break;
 }
 $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur, $mois);
 $lesFraisForfait = $pdo->getLesFraisForfait($idVisiteur, $mois);
 require 'vues/v_listeFraisForfait.php';
 require 'vues/v_listeFraisHorsForfait.php';
+

@@ -15,7 +15,7 @@
  */
 ?>
 
-<form action="index.php?uc=validerFrais&action=corriger" 
+<form action="index.php?uc=validerFrais&action=corrigerFraisForfait" 
       method="post" role="form"><div class="row">
         <div class="col-md-4">
             <h3>Choisir le visiteur : </h3>
@@ -108,7 +108,7 @@
     </div>
 </form>
 
-<form action="index.php?uc=validerFrais&action=corrigerFrais" 
+<form action="index.php?uc=validerFrais&action=corrigerFraisHorsForfait" 
       method="post" role="form"><hr>
     <input type="hidden" value="<?php echo $visiteurASelectionner ?>" name="visiteur">
     <input type="hidden" value="<?php echo $moisASelectionner ?>" name="lstMois">
@@ -125,6 +125,7 @@
                 </tr>
             </thead>  
             <tbody>
+              
                 <?php
                 foreach ($lesFraisHorsForfait as $unFraisHorsForfait) {
                     $libelle = htmlspecialchars($unFraisHorsForfait['libelle']);
@@ -133,14 +134,15 @@
                     $id = $unFraisHorsForfait['id'];
                     ?>           
                     <tr>
-                        <td><input type="text" value="<?php echo $date ?>" name="date"></td>
+                        <td><input type="hidden" value="<?php echo $id?>" name="idFrais"><!-- comment -->
+                            <input type="text" value="<?php echo $date ?>" name="date"></td>
                         <td><input type="text" value="<?php echo $libelle ?>" name="libelle"></td>
                         <td><input type="text" value="<?php echo $montant ?>" name="montant"></td>
                         <td> <input id="corriger" name="corriger" type="submit" value="Corriger"  class="btn btn-success">
                         <td> <input id="reporter" name="reporter" type="submit" value="Reporter"  class="btn btn-success">
                         <td> <input id="supprimer" name="supprimer" type="submit" value="Supprimer"  class="btn btn-success">
 
-                </tr>
+                </tr>       
             <?php } ?>
             </tbody>  
         </table>
@@ -158,9 +160,15 @@
 
 
 </div>
+<form action="index.php?uc=validerFrais&action=validerTotal" 
+      method="post" role="form">
+    
+    <input type="hidden" value="<?php echo $visiteurASelectionner ?>" name="visiteur">
+    <input type="hidden" value="<?php echo $moisASelectionner ?>" name="lstMois">
+    
+    
 
 <div>
-    <button class="btn btn-success" type="submit">Ajouter</button>
-    <button class="btn btn-danger" type="reset">Effacer</button>
+    <button class="btn btn-success" type="submit">Valider</button>
 </form>
 </div>
